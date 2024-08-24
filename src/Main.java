@@ -3,13 +3,16 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 class hWindow extends JFrame {
     static JTextPane rusTextPane;
     static JTextPane engTextPane;
-
+    static JLabel textSleva;
+    static JLabel textSprava;
 
     hWindow(String name){
         super(name);
@@ -17,7 +20,45 @@ class hWindow extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+
+
+
+        JRadioButton jRaskladka = new JRadioButton("Исправить раскладку",true);
+        jRaskladka.setFocusPainted(false);
+        jRaskladka.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == 1){
+                    textSleva.setText("Неверная раскладка");
+                    textSprava.setText("Исправленный текст");
+                }
+            }
+        });
+
+        JRadioButton jSumma = new JRadioButton("Посчитать сумму",false);
+        jSumma.setFocusPainted(false);
+        jSumma.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == 1){
+                    textSleva.setText("Введите все числа для сложения");
+                    textSprava.setText("Полученная сумма");
+                }
+            }
+        });
+
         JMenuBar jMenuBar = new JMenuBar();
+        JMenu jmenuSettings = new JMenu("Настройки");
+
+        ButtonGroup bGroup = new ButtonGroup();
+        bGroup.add(jRaskladka);
+        bGroup.add(jSumma);
+
+
+        jmenuSettings.add(jRaskladka);
+        jmenuSettings.add(jSumma);
+
+
         JMenu jmenuAbout = new JMenu("Разработчик");
         jmenuAbout.addMouseListener(new MouseAdapter() {
             @Override
@@ -26,14 +67,18 @@ class hWindow extends JFrame {
                 JOptionPane.showMessageDialog(hWindow.this,"Разработчик: Чиркунов Александр","Информация о разработчике",JOptionPane.INFORMATION_MESSAGE);
             }
         });
+        jMenuBar.add(jmenuSettings,BorderLayout.NORTH);
         jMenuBar.add(jmenuAbout,BorderLayout.NORTH);
+
+        textSleva = new JLabel("Неверная раскладка");
+        textSprava = new JLabel("Исправленный текст");
 
 
         JPanel labelPanel = new JPanel();
         labelPanel.setBounds(10,10,560,30);
         labelPanel.setLayout(new GridLayout(1,2));
-        labelPanel.add(new JLabel("Неверная раскладка"));
-        labelPanel.add(new JLabel("Исправленный текст"));
+        labelPanel.add(textSleva);
+        labelPanel.add(textSprava);
 
         engTextPane = new JTextPane();
         JScrollPane engTextPaneScroll = new JScrollPane(engTextPane);
@@ -44,7 +89,12 @@ class hWindow extends JFrame {
         engTextPane.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                changeEnToRu(engTextPane.getText());
+                if(jRaskladka.isSelected()) {
+                    changeEnToRu(engTextPane.getText());
+                }
+                if(jSumma.isSelected()) {
+                    summAll(engTextPane.getText());
+                }
             }
 
             @Override
@@ -54,7 +104,12 @@ class hWindow extends JFrame {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                changeEnToRu(engTextPane.getText());
+                if(jRaskladka.isSelected()) {
+                    changeEnToRu(engTextPane.getText());
+                }
+                if(jSumma.isSelected()) {
+                    summAll(engTextPane.getText());
+                }
             }
         });
 
@@ -80,6 +135,19 @@ class hWindow extends JFrame {
         add(forAll, BorderLayout.CENTER);
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    static void summAll(String text){
+        String[] splitSums = text.split("\r\n");
+        int vsyaSumma = 0;
+        for (String splitSum : splitSums) {
+            if(splitSum.equals("") || splitSum.equals(" ") || splitSum == null){}
+            else{
+                vsyaSumma += Integer.parseInt(splitSum.trim());
+            }
+        }
+        String chislo = String.valueOf(vsyaSumma);
+        rusTextPane.setText(chislo);
     }
 
    static void changeEnToRu(String text){
