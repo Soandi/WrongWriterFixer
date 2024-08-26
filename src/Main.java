@@ -143,7 +143,13 @@ class hWindow extends JFrame {
         for (String splitSum : splitSums) {
             if(splitSum.equals("") || splitSum.equals(" ") || splitSum == null){}
             else{
-                vsyaSumma += Integer.parseInt(splitSum.trim());
+                splitSum = splitSum.replace(" ","");
+                try {
+                    vsyaSumma += Integer.parseInt(splitSum.trim());
+
+                }catch(Exception e){
+                    System.out.println("Обнаружена ошибка работы с данными");
+                }
             }
         }
         String chislo = String.valueOf(vsyaSumma);
