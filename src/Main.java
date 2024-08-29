@@ -47,16 +47,30 @@ class hWindow extends JFrame {
             }
         });
 
+        JRadioButton jSummaWords = new JRadioButton("Посчитать слова в тексте",false);
+        jSummaWords.setFocusPainted(false);
+        jSummaWords.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == 1){
+                    textSleva.setText("Введите текст");
+                    textSprava.setText("Количество слов");
+                }
+            }
+        });
+
         JMenuBar jMenuBar = new JMenuBar();
         JMenu jmenuSettings = new JMenu("Настройки");
 
         ButtonGroup bGroup = new ButtonGroup();
         bGroup.add(jRaskladka);
         bGroup.add(jSumma);
+        bGroup.add(jSummaWords);
 
 
         jmenuSettings.add(jRaskladka);
         jmenuSettings.add(jSumma);
+        jmenuSettings.add(jSummaWords);
 
 
         JMenu jmenuAbout = new JMenu("Разработчик");
@@ -95,6 +109,9 @@ class hWindow extends JFrame {
                 if(jSumma.isSelected()) {
                     summAll(engTextPane.getText());
                 }
+                if(jSummaWords.isSelected()) {
+                    summWords(engTextPane.getText());
+                }
             }
 
             @Override
@@ -109,6 +126,9 @@ class hWindow extends JFrame {
                 }
                 if(jSumma.isSelected()) {
                     summAll(engTextPane.getText());
+                }
+                if(jSummaWords.isSelected()) {
+                    summWords(engTextPane.getText());
                 }
             }
         });
@@ -135,6 +155,24 @@ class hWindow extends JFrame {
         add(forAll, BorderLayout.CENTER);
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    static void summWords(String text){
+        String sumWords;
+        int znakovWithSpaces = text.length();
+        String nospaces = text;
+        nospaces = nospaces.replace("\r","");
+        nospaces = nospaces.replace("\r\n","");
+        nospaces = nospaces.replace("\n","");
+
+        String[] b = nospaces.split(" ");
+
+        nospaces = nospaces.replace("\s","");
+
+        int znakovWithoutSpaces = nospaces.length();
+
+        sumWords = "Знаков с пробелами: " + znakovWithSpaces + "\r\n" + "Знаков без пробелов: " + znakovWithoutSpaces + "\r\n" + "Количество слов: " + b.length;
+        rusTextPane.setText(sumWords);
     }
 
     static void summAll(String text){
